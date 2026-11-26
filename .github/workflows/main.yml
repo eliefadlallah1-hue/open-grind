@@ -1,0 +1,27 @@
+name: Build Open Grind iOS IPA
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v20
+
+      - name: Build iOS IPA
+        run: |
+          nix develop --command bun install
+          nix develop --command bun run package:ios
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: open-grind-ios
+          path: |
+            **/*.ipa
+          if-no-files-found: error
